@@ -3,12 +3,13 @@ let board;
 let boardWidth = 740;
 let boardHeight = 250;
 let context;
+let floor = 32;
 
 // dino
 let dinoWidth = 45;
 let dinoHeight = 50;
 let dinoX = 50;
-let dinoY = boardHeight - dinoHeight - 32;
+let dinoY = boardHeight - dinoHeight - floor;
 let dinoImg;
 
 // box
@@ -17,13 +18,21 @@ let boxX = 700;
 //box1
 let boxWidth1 = 32;
 let boxHeight1 = 32;
-let boxY1 = boardHeight - boxHeight1 - 32;
+let boxY1 = boardHeight - boxHeight1 - floor;
 let boxImg1;
 //box2
 let boxWidth2 = 33;
 let boxHeight2 = 64;
-let boxY2 = boardHeight - boxHeight2 - 32;
+let boxY2 = boardHeight - boxHeight2 - floor;
 let boxImg2;
+
+// diamonds
+let diamondArray = [];
+let diamondWidth = 32;
+let diamondHeight = 32;
+let diamondX = 850;
+let diamondY = boardHeight - diamondHeight - floor;
+let diamondImg;
 
 // logic
 let gameOver = false
@@ -50,27 +59,35 @@ window.onload = function()  {
     board.height = boardHeight;
     board.width = boardWidth;
 
+    context = board.getContext("2d")
+
+    // ground
     grassImg = new Image();
     grassImg .src = "./sprites/Grass.png";
     grassImg .onload = function() {
         context.drawImage(grassImg , -5, boardHeight - 34, 750, 34);
     }
 
-    context = board.getContext("2d")
-
+    // dino
     dinoImg = new Image();
     dinoImg.src = "./sprites/DinoSprites.png";
     dinoImg.onload = function() {
         context.drawImage(dinoImg, 72*5+18, 12, dino.width, dino.height, dinoX, dinoY, dino.width, dino.height);
     }
 
+    // boxes
     boxImg1 = new Image();
     boxImg1.src = "./sprites/box.png"
     boxImg2 = new Image();
     boxImg2.src = "./sprites/box2.png"
 
+    // diamonds
+    diamondImg = new Image();
+    diamondImg.src = "./sprites/diamond.png"
+
     requestAnimationFrame(update);
     setInterval(placeBox, 1000);
+    setInterval(placeDiamond, 1000);
     document.addEventListener("keydown", moveDino);
 }
 
@@ -103,7 +120,7 @@ function update() {
 
     elapsed_physics = now - then_physics;
 
-    // physics && boxes
+    // physics && boxes, diamonds
     if (elapsed_physics > physics_interval) {
         context.clearRect(0, 0, board.width, board.height);
         context.drawImage(grassImg , -5, boardHeight - 34, 750, 34);
@@ -125,6 +142,21 @@ function update() {
             }
 
         }
+
+        for (let i = 0; i < diamondArray.length; i++) {
+            let diamond = diamondArray[i];
+            diamond.x += velocityX;
+            context.drawImage(diamond.img, diamond.x, diamond.y, diamond.width, diamond.height);
+
+            if (detectCollision(dino, diamond)) {
+                score += 1;
+                diamondArray.shift()
+            }
+        }
+
+        context.fillStyle="black";
+        context.font="20px courier";
+        context.fillText(score, 5, 20);
     }
 }
 
@@ -177,6 +209,30 @@ function placeBox() {
         boxArray.shift();
     }
 
+}
+
+function placeDiamond() {
+    if (gameOver) {
+        return;
+    }
+
+    let diamond = {
+        img : diamondImg,
+        x : diamondX,
+        y : diamondY,
+        width : diamondWidth,
+        height: diamondHeight
+    };
+
+    let placeDiamondChance = Math.random();
+    
+    if (placeDiamondChance >= 0.50) {
+        diamondArray.push(diamond);
+    }
+    
+    if (diamondArray.length > 5) {
+        diamondArray.shift();
+    }
 }
 
 let offset = 10 // offset of the dinosaurs nose
