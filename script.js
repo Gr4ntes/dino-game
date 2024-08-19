@@ -150,7 +150,7 @@ function update() {
 
             if (detectCollision(dino, diamond)) {
                 score += 1;
-                diamondArray.shift()
+                diamondArray.splice(i, 1);
             }
         }
 
