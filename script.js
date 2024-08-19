@@ -13,11 +13,17 @@ let dinoImg;
 
 // box
 let boxArray = [];
-let boxWidth = 32;
-let boxHeight = 32;
 let boxX = 700;
-let boxY = boardHeight - boxHeight - 32;
-let boxImg;
+//box1
+let boxWidth1 = 32;
+let boxHeight1 = 32;
+let boxY1 = boardHeight - boxHeight1 - 32;
+let boxImg1;
+//box2
+let boxWidth2 = 33;
+let boxHeight2 = 64;
+let boxY2 = boardHeight - boxHeight2 - 32;
+let boxImg2;
 
 // logic
 let gameOver = false
@@ -58,8 +64,10 @@ window.onload = function()  {
         context.drawImage(dinoImg, 72*5+18, 12, dino.width, dino.height, dinoX, dinoY, dino.width, dino.height);
     }
 
-    boxImg = new Image();
-    boxImg.src = "./sprites/box.png"
+    boxImg1 = new Image();
+    boxImg1.src = "./sprites/box.png"
+    boxImg2 = new Image();
+    boxImg2.src = "./sprites/box2.png"
 
     requestAnimationFrame(update);
     setInterval(placeBox, 1000);
@@ -94,6 +102,7 @@ function update() {
     }
 
     elapsed_physics = now - then_physics;
+
     // physics && boxes
     if (elapsed_physics > physics_interval) {
         context.clearRect(0, 0, board.width, board.height);
@@ -126,7 +135,7 @@ function moveDino(e) {
 
     if ((e.code == "Space" || e.code == "ArrowUp") && dino.y == dinoY) {
         //jump
-        velocityY = -10;
+        velocityY = -15;
     }
     else if (e.code == "ArrowDown" && dino.y == dinoY) {
         //duck
@@ -140,21 +149,37 @@ function placeBox() {
     }
 
     let box = {
-        img : boxImg,
+        img : null,
         x : boxX,
-        y : boxY,
-        width : boxWidth,
-        height: boxHeight
+        y : null,
+        width : null,
+        height: null
     }
 
-    boxArray.push(box);
+    let placeBoxChance = Math.random();
+    
+    if (placeBoxChance > 0.66) {
+        box.img = boxImg1
+        box.height = boxHeight1
+        box.width = boxWidth1
+        box.y = boxY1
+        boxArray.push(box);
+    } 
+    else if (placeBoxChance > 0.33) {
+        box.img = boxImg2
+        box.height = boxHeight2
+        box.width = boxWidth2
+        box.y = boxY2
+        boxArray.push(box);
+    }
+
     if (boxArray.length > 5) {
         boxArray.shift();
     }
 
 }
 
-let offset = 10
+let offset = 10 // offset of the dinosaurs nose
 function detectCollision(a, b) {
     return a.x < b.x + b.width &&   //a's top left corner doesn't reach b's top right corner
            a.x + a.width - offset > b.x &&   //a's top right corner passes b's top left corner
