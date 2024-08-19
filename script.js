@@ -154,9 +154,10 @@ function update() {
             }
         }
 
-        context.fillStyle="black";
-        context.font="20px courier";
-        context.fillText(score, 5, 20);
+        context.fillStyle="darkgreen";
+        context.font="35px monogram";
+        display_text = "Score: " + score
+        context.fillText(display_text, 315, 30);
     }
 }
 

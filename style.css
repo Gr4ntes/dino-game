@@ -1,5 +1,11 @@
+@font-face {
+    font-family: 'monogram';
+    src: url('./fonts/monogram.ttf') format('truetype')
+}
+
 body {
     text-align: center;
+    font-family: 'monogram', sans-serif;
 }
 
 #board {
