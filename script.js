@@ -45,17 +45,18 @@ let birdArray = [];
 let birdWidth = 32;
 let birdHeight = 28;
 let birdX = 1250;
-let birdY = boardHeight - birdHeight - floor - 48;
+let birdY = boardHeight - birdHeight - floor - 47;
 let birdImg;
 let birdMaxFrame = 7;
 
 // logic
 let gameOver = false
 let score = 0;
+let next_speedup_score = 10;
 
 // physics
 let physics_interval = 1000 / 60;
-let velocityX = -8;
+let velocityX = -6;
 let velocityY = 0;
 let gravity = 0.8;
 let then_physics = 0;
@@ -215,6 +216,12 @@ function update() {
         context.font="35px monogram";
         display_text = "Score: " + score
         context.fillText(display_text, 315, 30);
+
+        if (score >= next_speedup_score) {
+            next_speedup_score += 10;
+            velocityX -= 0.5;
+            console.log(velocityX)
+        }
     }
 }
 
@@ -235,8 +242,8 @@ function moveDino(e) {
         start_frame = dinoDuckStartFrame;
         end_frame = dinoDuckEndFrame;
         frame = start_frame;
-        dinoY = baseDinoY + 2;
-        dino.height = dinoHeight - 2;
+        dinoY = baseDinoY + 3;
+        dino.height = dinoHeight - 3;
         dino.width = dinoWidth + 15;
         dino.duck = true;
     }
