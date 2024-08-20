@@ -9,14 +9,25 @@ let floor = 32;
 let dinoWidth = 45;
 let dinoHeight = 50;
 let dinoX = 50;
-let dinoY = boardHeight - dinoHeight - floor;
-let baseDinoY = dinoY;
+let dinoY = boardHeight - dinoHeight - floor; // this value is used in calculations (can be changed)
+const baseDinoY = dinoY; // this value is constant 
+let imgOffsetX = 18;
+let imgOffsetY = 12;
 let dinoImg;
 // dino animation
 let dinoRunStartFrame = 4;
 let dinoRunEndFrame = 9;
 let dinoDuckStartFrame = 18;
 let dinoDuckEndFrame = 23;
+
+// animation
+let frame = dinoRunStartFrame;
+let start_frame = dinoRunStartFrame;
+let end_frame = dinoRunEndFrame;
+let anim_interval = 1000 / 5; // dino animation is played in 5 fps
+let bird_anim_interval = 1000 / 10; // bird animation is played at 10 fps
+let then_anim = 0
+let now, elapsed_anim
 
 // box
 let boxArray = [];
@@ -62,15 +73,16 @@ let gravity = 0.8;
 let then_physics = 0;
 let elapsed_physics;
 
-
+// dino object
 let dino = {
     x : dinoX,
     y : dinoY,
     width : dinoWidth,
     height : dinoHeight,
-    duck : false
+    duck : false // whether is crouching or not
 }
 
+// called when the window is loaded
 window.onload = function()  {
     board = document.getElementById("board");
     board.height = boardHeight;
@@ -89,14 +101,15 @@ window.onload = function()  {
     dinoImg = new Image();
     dinoImg.src = "./sprites/DinoSprites.png";
     dinoImg.onload = function() {
-        context.drawImage(dinoImg, 72*5+18, 12, dino.width, dino.height, dinoX, dinoY, dino.width, dino.height);
+        context.drawImage(dinoImg, 72*frame+imgOffsetX, imgOffsetY, dino.width, dino.height, 
+            dinoX, dinoY, dino.width, dino.height);
     }
 
     // boxes
     boxImg1 = new Image();
-    boxImg1.src = "./sprites/box.png"
+    boxImg1.src = "./sprites/box.png";
     boxImg2 = new Image();
-    boxImg2.src = "./sprites/box2.png"
+    boxImg2.src = "./sprites/box2.png";
 
     // diamonds
     diamondImg1 = new Image();
@@ -110,7 +123,7 @@ window.onload = function()  {
 
     //birds
     birdImg = new Image();
-    birdImg.src = "./sprites/BirdSprites.png"
+    birdImg.src = "./sprites/BirdSprites.png";
 
     requestAnimationFrame(update);
     setInterval(placeBox, 1500);
@@ -120,21 +133,14 @@ window.onload = function()  {
     document.addEventListener("keyup", unDuck);
 }
 
-// animation
-let frame = dinoRunStartFrame;
-let start_frame = dinoRunStartFrame;
-let end_frame = dinoRunEndFrame;
-let anim_interval = 1000 / 5; // dino animation is played in 5 fps
-let bird_anim_interval = 1000 / 10; // bird animation is played at 10 fps
-let then_anim = 0
-let now, elapsed_anim
+
 
 function update() {
     requestAnimationFrame(update);
     if (gameOver) {
         return;
     }
-    context.drawImage(grassImg , -5, boardHeight - 34, 750, 34);
+    context.drawImage(grassImg, -5, boardHeight - 34, 750, 34);
 
     now = Date.now();
     elapsed_anim = now - then_anim;
@@ -151,15 +157,19 @@ function update() {
 
     elapsed_physics = now - then_physics;
 
-    // physics && boxes, diamonds
+    // physics and moving objects
     if (elapsed_physics > physics_interval) {
+        // clear canvas
         context.clearRect(0, 0, board.width, board.height);
+        // drawing ground
         context.drawImage(grassImg , -5, boardHeight - 34, 750, 34);
+
         then_physics = now - (elapsed_physics % physics_interval);
 
+        // applying physics to the dino and drawing it
         velocityY += gravity;
         dino.y = Math.min(dino.y + velocityY, dinoY);
-        context.drawImage(dinoImg, 72*frame+18, 12, dino.width, dino.height, 
+        context.drawImage(dinoImg, 72*frame+imgOffsetX, imgOffsetY, dino.width, dino.height, 
             dino.x, dino.y, dino.width, dino.height);
         
         // drawing and moving boxes
@@ -181,7 +191,7 @@ function update() {
 
             if (detectCollision(dino, diamond)) {
                 score += diamond.score;
-                diamondArray.splice(i, 1);
+                diamondArray.splice(i, 1); // deleting particular diamond that collided with a player
             }
         }
 
@@ -217,6 +227,7 @@ function update() {
         display_text = "Score: " + score
         context.fillText(display_text, 315, 30);
 
+        // speeding up the game
         if (score >= next_speedup_score) {
             next_speedup_score += 10;
             velocityX -= 0.5;
@@ -372,7 +383,7 @@ function placeBird() {
 
 }
 
-let offset = 10 // offset of the dinosaurs nose
+let offset = 10 // offset of the dinosaur's nose
 function detectCollision(a, b) {
     return a.x < b.x + b.width &&   //a's top left corner doesn't reach b's top right corner
            a.x + a.width - offset > b.x &&   //a's top right corner passes b's top left corner
