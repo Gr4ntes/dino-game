@@ -10,7 +10,13 @@ let dinoWidth = 45;
 let dinoHeight = 50;
 let dinoX = 50;
 let dinoY = boardHeight - dinoHeight - floor;
+let baseDinoY = dinoY;
 let dinoImg;
+// dino animation
+let dinoRunStartFrame = 4;
+let dinoRunEndFrame = 9;
+let dinoDuckStartFrame = 18;
+let dinoDuckEndFrame = 23;
 
 // box
 let boxArray = [];
@@ -30,16 +36,16 @@ let boxImg2;
 let diamondArray = [];
 let diamondWidth = 32;
 let diamondHeight = 32;
-let diamondX = 1000;
+let diamondX = 1100;
 let diamondY = boardHeight - diamondHeight - floor;
 let diamondImg;
 
 // birds
 let birdArray = [];
-let birdWidth = 30;
-let birdHeight = 26;
+let birdWidth = 32;
+let birdHeight = 28;
 let birdX = 1250;
-let birdY = boardHeight - birdHeight - floor - 40;
+let birdY = boardHeight - birdHeight - floor - 48;
 let birdImg;
 let birdMaxFrame = 7;
 
@@ -60,7 +66,8 @@ let dino = {
     x : dinoX,
     y : dinoY,
     width : dinoWidth,
-    height : dinoHeight
+    height : dinoHeight,
+    duck : false
 }
 
 window.onload = function()  {
@@ -103,10 +110,13 @@ window.onload = function()  {
     setInterval(placeDiamond, 1500);
     setInterval(placeBird, 1500);
     document.addEventListener("keydown", moveDino);
+    document.addEventListener("keyup", unDuck);
 }
 
 // animation
-let frame = 4;
+let frame = dinoRunStartFrame;
+let start_frame = dinoRunStartFrame;
+let end_frame = dinoRunEndFrame;
 let anim_interval = 1000 / 5; // dino animation is played in 5 fps
 let bird_anim_interval = 1000 / 10; // bird animation is played at 10 fps
 let then_anim = 0
@@ -127,8 +137,8 @@ function update() {
         then_anim = now - (elapsed_anim % anim_interval);
 
         frame += 1;
-        if (frame > 9) {
-            frame = 4;
+        if (frame > end_frame) {
+            frame = start_frame;
         }
     }
 
@@ -210,11 +220,40 @@ function moveDino(e) {
     if ((e.code == "Space" || e.code == "ArrowUp") && dino.y == dinoY) {
         //jump
         velocityY = -15;
+        if (dino.duck) {
+            resetDino();
+        }
     }
-    else if (e.code == "ArrowDown" && dino.y == dinoY) {
+    else if (e.code == "ArrowDown" && dino.y == dinoY && !dino.duck) {
         //duck
+        start_frame = dinoDuckStartFrame;
+        end_frame = dinoDuckEndFrame;
+        frame = start_frame;
+        dinoY = baseDinoY + 2;
+        dino.height = dinoHeight - 2;
+        dino.width = dinoWidth + 15;
+        dino.duck = true;
+    }
+}
+
+function unDuck(e) {
+    if (gameOver) {
+        return;
     }
 
+    if (e.code == "ArrowDown" && dino.y == dinoY) {
+        resetDino();
+    }
+}
+
+function resetDino() {
+    start_frame = dinoRunStartFrame;
+    end_frame = dinoRunEndFrame;
+    frame = start_frame;
+    dinoY = baseDinoY;
+    dino.height = dinoHeight;
+    dino.width = dinoWidth;
+    dino.duck = false;
 }
 
 function placeBox() {
