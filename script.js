@@ -38,7 +38,7 @@ let diamondWidth = 32;
 let diamondHeight = 32;
 let diamondX = 1100;
 let diamondY = boardHeight - diamondHeight - floor;
-let diamondImg;
+let diamondImg1, diamondImg2, diamondImg3, diamondImg4;
 
 // birds
 let birdArray = [];
@@ -98,8 +98,14 @@ window.onload = function()  {
     boxImg2.src = "./sprites/box2.png"
 
     // diamonds
-    diamondImg = new Image();
-    diamondImg.src = "./sprites/diamond.png"
+    diamondImg1 = new Image();
+    diamondImg1.src = "./sprites/diamond.png"
+    diamondImg2 = new Image();
+    diamondImg2.src = "./sprites/diamond2.png"
+    diamondImg3 = new Image();
+    diamondImg3.src = "./sprites/diamond3.png"
+    diamondImg4 = new Image();
+    diamondImg4.src = "./sprites/diamond4.png"
 
     //birds
     birdImg = new Image();
@@ -173,7 +179,7 @@ function update() {
             context.drawImage(diamond.img, diamond.x, diamond.y, diamond.width, diamond.height);
 
             if (detectCollision(dino, diamond)) {
-                score += 1;
+                score += diamond.score;
                 diamondArray.splice(i, 1);
             }
         }
@@ -298,16 +304,31 @@ function placeDiamond() {
     }
 
     let diamond = {
-        img : diamondImg,
+        img : null,
         x : diamondX,
         y : diamondY,
         width : diamondWidth,
-        height: diamondHeight
+        height : diamondHeight,
+        score : null
     };
 
     let placeDiamondChance = Math.random();
     
-    if (placeDiamondChance >= 0.50) {
+    if (placeDiamondChance >= 0.95) {
+        diamond.img = diamondImg4;
+        diamond.score = 4
+        diamondArray.push(diamond);
+    } else if (placeDiamondChance >= 0.90) {
+        diamond.img = diamondImg3;
+        diamond.score = 3
+        diamondArray.push(diamond);
+    } else if (placeDiamondChance >= 0.75) {
+        diamond.img = diamondImg2;
+        diamond.score = 2
+        diamondArray.push(diamond);
+    } else if (placeDiamondChance >= 0.50) {
+        diamond.img = diamondImg1;
+        diamond.score = 1
         diamondArray.push(diamond);
     }
     
