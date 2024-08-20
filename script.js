@@ -14,7 +14,7 @@ let dinoImg;
 
 // box
 let boxArray = [];
-let boxX = 700;
+let boxX = 900;
 //box1
 let boxWidth1 = 32;
 let boxHeight1 = 32;
@@ -30,9 +30,18 @@ let boxImg2;
 let diamondArray = [];
 let diamondWidth = 32;
 let diamondHeight = 32;
-let diamondX = 850;
+let diamondX = 1000;
 let diamondY = boardHeight - diamondHeight - floor;
 let diamondImg;
+
+// birds
+let birdArray = [];
+let birdWidth = 30;
+let birdHeight = 26;
+let birdX = 1250;
+let birdY = boardHeight - birdHeight - floor - 40;
+let birdImg;
+let birdMaxFrame = 7;
 
 // logic
 let gameOver = false
@@ -85,16 +94,21 @@ window.onload = function()  {
     diamondImg = new Image();
     diamondImg.src = "./sprites/diamond.png"
 
+    //birds
+    birdImg = new Image();
+    birdImg.src = "./sprites/BirdSprites.png"
+
     requestAnimationFrame(update);
-    setInterval(placeBox, 1000);
-    setInterval(placeDiamond, 1000);
+    setInterval(placeBox, 1500);
+    setInterval(placeDiamond, 1500);
+    setInterval(placeBird, 1500);
     document.addEventListener("keydown", moveDino);
 }
 
 // animation
 let frame = 4;
-let fps = 5;
-let anim_interval = 1000 / 5;
+let anim_interval = 1000 / 5; // dino animation is played in 5 fps
+let bird_anim_interval = 1000 / 10; // bird animation is played at 10 fps
 let then_anim = 0
 let now, elapsed_anim
 
@@ -131,6 +145,7 @@ function update() {
         context.drawImage(dinoImg, 72*frame+18, 12, dino.width, dino.height, 
             dino.x, dino.y, dino.width, dino.height);
         
+        // drawing and moving boxes
         for (let i = 0; i < boxArray.length; i++) {
             let box = boxArray[i];
             box.x += velocityX;
@@ -138,11 +153,10 @@ function update() {
 
             if (detectCollision(dino, box)) {
                 gameOver = true;
-                
             }
-
         }
 
+        // drawing and moving diamonds
         for (let i = 0; i < diamondArray.length; i++) {
             let diamond = diamondArray[i];
             diamond.x += velocityX;
@@ -154,6 +168,33 @@ function update() {
             }
         }
 
+        // drawing and moving birds
+        for (let i = 0; i < birdArray.length; i++) {
+            let bird = birdArray[i];
+            bird.x += velocityX;
+
+            bird_now = Date.now();
+            bird.elapsed = bird_now - bird.then;
+
+            if (bird.elapsed > bird_anim_interval) {
+                bird.then = bird_now - (bird.elapsed % bird_anim_interval);
+
+                bird.frame += 1
+                if (bird.frame > birdMaxFrame) {
+                    bird.frame = 0;
+                }
+            }
+
+            context.drawImage(birdImg, 32*bird.frame, 0, bird.width, bird.height, 
+                bird.x, bird.y, bird.width, bird.height);
+
+            if (detectCollision(dino, bird)) {
+                gameOver = true;
+            }
+
+        }
+
+        // printing score
         context.fillStyle="darkgreen";
         context.font="35px monogram";
         display_text = "Score: " + score
@@ -234,6 +275,34 @@ function placeDiamond() {
     if (diamondArray.length > 5) {
         diamondArray.shift();
     }
+}
+
+function placeBird() {
+    if (gameOver) {
+        return;
+    }
+
+    let bird = {
+        img : birdImg,
+        x : birdX,
+        y : birdY,
+        width : birdWidth,
+        height : birdHeight,
+        frame : 0,
+        elapsed : null,
+        then : 0,
+    }
+
+    let placeBirdChance = Math.random();
+
+    if (placeBirdChance >= 0.80) {
+        birdArray.push(bird);
+    }
+
+    if (birdArray.length > 5) {
+        birdArray.shift();
+    }
+
 }
 
 let offset = 10 // offset of the dinosaurs nose
