@@ -61,9 +61,11 @@ let birdImg;
 let birdMaxFrame = 7;
 
 // logic
-let gameOver = false
+let gameOver = false;
+let gameStarted = false;
 let score = 0;
 let next_speedup_score = 10;
+let EnterKeyImg;
 
 // physics
 let physics_interval = 1000 / 60;
@@ -92,8 +94,8 @@ window.onload = function()  {
 
     // ground
     grassImg = new Image();
-    grassImg .src = "./sprites/Grass.png";
-    grassImg .onload = function() {
+    grassImg.src = "./sprites/Grass.png";
+    grassImg.onload = function() {
         context.drawImage(grassImg , -5, boardHeight - 34, 750, 34);
     }
 
@@ -125,14 +127,35 @@ window.onload = function()  {
     birdImg = new Image();
     birdImg.src = "./sprites/BirdSprites.png";
 
-    requestAnimationFrame(update);
-    setInterval(placeBox, 1500);
-    setInterval(placeDiamond, 1500);
-    setInterval(placeBird, 1500);
+    // start game text
+    context.fillStyle="darkgreen";
+    context.font="35px monogram";
+    
+    EnterKeyImg = new Image();
+    EnterKeyImg.src = "./sprites/enter_key.png";
+    EnterKeyImg.onload = function() {
+        context.drawImage(EnterKeyImg, 325, 8, 64, 32);
+    }
+
+    display_text = "Press";
+    context.fillText(display_text, 250, 30);
+    display_text = "to start";
+    context.fillText(display_text, 400, 30);
+
     document.addEventListener("keydown", moveDino);
+    document.addEventListener("keydown", start)
     document.addEventListener("keyup", unDuck);
 }
 
+
+function start(e) {
+    if (e.code == "Enter" && !gameStarted) {
+        requestAnimationFrame(update);
+        setInterval(placeBox, 1500);
+        setInterval(placeDiamond, 1500);
+        setInterval(placeBird, 1500);
+    }
+}
 
 
 function update() {
@@ -225,7 +248,7 @@ function update() {
         context.fillStyle="darkgreen";
         context.font="35px monogram";
         display_text = "Score: " + score
-        context.fillText(display_text, 315, 30);
+        context.fillText(display_text, 310, 30);
 
         // speeding up the game
         if (score >= next_speedup_score) {
