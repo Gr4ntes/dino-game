@@ -6,9 +6,42 @@
 body {
     text-align: center;
     font-family: 'monogram', sans-serif;
+    background-color: lightblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #board {
     background-color: lightblue;
-    border: 1px solid black;
+    width: 740px;
+    height: 250px;
+}
+
+#page-heading {
+    font-size: 45px;
+    margin: 0.5%;
+    color: #453335;
+}
+
+#tutorial-container {
+    background-color: #805941;
+    height: 100px;
+    width: 732px;
+    border-left: 2px solid #453335;
+    border-right: 2px solid #453335;
+    border-bottom: 2px solid #453335;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.tutorial-text {
+    color: white;
+    font-size: 30px;
+}
+
+.keys-img {
+    padding: 5px;
 }

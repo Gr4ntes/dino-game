@@ -1,6 +1,6 @@
 // board
 let board;
-let boardWidth = 740;
+let boardWidth = 750;
 let boardHeight = 250;
 let context;
 let floor = 32;
@@ -96,7 +96,7 @@ window.onload = function()  {
     grassImg = new Image();
     grassImg.src = "./sprites/Grass.png";
     grassImg.onload = function() {
-        context.drawImage(grassImg , -5, boardHeight - 34, 750, 34);
+        context.drawImage(grassImg , 0, boardHeight - 34, 750, 34);
     }
 
     // dino
@@ -130,7 +130,7 @@ window.onload = function()  {
     // start game text
     context.fillStyle="darkgreen";
     context.font="35px monogram";
-    
+
     EnterKeyImg = new Image();
     EnterKeyImg.src = "./sprites/enter_key.png";
     EnterKeyImg.onload = function() {
@@ -138,13 +138,11 @@ window.onload = function()  {
     }
 
     display_text = "Press";
-    context.fillText(display_text, 250, 30);
+    context.fillText(display_text, 255, 30);
     display_text = "to start";
     context.fillText(display_text, 400, 30);
 
-    document.addEventListener("keydown", moveDino);
     document.addEventListener("keydown", start)
-    document.addEventListener("keyup", unDuck);
 }
 
 
@@ -154,6 +152,9 @@ function start(e) {
         setInterval(placeBox, 1500);
         setInterval(placeDiamond, 1500);
         setInterval(placeBird, 1500);
+        document.addEventListener("keyup", unDuck);
+        document.addEventListener("keydown", moveDino);
+        gameStarted = true;
     }
 }
 
@@ -163,7 +164,6 @@ function update() {
     if (gameOver) {
         return;
     }
-    context.drawImage(grassImg, -5, boardHeight - 34, 750, 34);
 
     now = Date.now();
     elapsed_anim = now - then_anim;
@@ -185,7 +185,7 @@ function update() {
         // clear canvas
         context.clearRect(0, 0, board.width, board.height);
         // drawing ground
-        context.drawImage(grassImg , -5, boardHeight - 34, 750, 34);
+        context.drawImage(grassImg , 0, boardHeight - 34, 750, 34);
 
         then_physics = now - (elapsed_physics % physics_interval);
 
@@ -248,7 +248,7 @@ function update() {
         context.fillStyle="darkgreen";
         context.font="35px monogram";
         display_text = "Score: " + score
-        context.fillText(display_text, 310, 30);
+        context.fillText(display_text, 318, 30);
 
         // speeding up the game
         if (score >= next_speedup_score) {
