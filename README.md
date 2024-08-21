@@ -11,3 +11,8 @@ https://rottingpixels.itch.io/nature-platformer-tileset
 
 *Font:* **datagoblin** https://datagoblin.itch.io/monogram
 
+*Keyboard sprites:* **Dream Mix** https://dreammix.itch.io/keyboard-keys-for-ui
+
+*Bird sprites:* **Joshua Briggs** https://joshua-briggs.itch.io/bird-sprite
+
+
